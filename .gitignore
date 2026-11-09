@@ -1,0 +1,37 @@
+# Secrets and local config — never commit
+.env
+.env.*
+!.env.example
+
+# Go build output
+/backend/bin/
+/backend/api
+/backend/api.exe
+/backend/migrate
+/backend/migrate.exe
+*.test
+*.out
+coverage.*
+
+# Node / frontend
+node_modules/
+/frontend/dist/
+/frontend/.vite/
+*.tsbuildinfo
+npm-debug.log*
+
+# Database volumes / local data
+/data/
+/.mariadb/
+*.sql.gz
+*.dump
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude local settings
+.claude/settings.local.json
