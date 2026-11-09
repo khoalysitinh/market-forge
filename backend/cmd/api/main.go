@@ -23,6 +23,10 @@ import (
 )
 
 func main() {
+	// `api healthcheck` is used by Docker: the runtime image has no curl.
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		os.Exit(healthcheck())
+	}
 	if err := run(); err != nil {
 		slog.Error("api stopped", "error", err)
 		os.Exit(1)
@@ -82,4 +86,22 @@ func run() error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return srv.Shutdown(shutdownCtx)
+}
+
+// healthcheck calls /api/v1/ready on the local server; exit 0 when ready.
+func healthcheck() int {
+	port := os.Getenv("MF_HEALTHCHECK_PORT")
+	if port == "" {
+		port = "8080"
+	}
+	client := &http.Client{Timeout: 3 * time.Second}
+	res, err := client.Get("http://127.0.0.1:" + port + "/api/v1/ready")
+	if err != nil {
+		return 1
+	}
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		return 1
+	}
+	return 0
 }

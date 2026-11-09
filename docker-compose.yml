@@ -1,0 +1,72 @@
+# Local development stack. NOT a production deployment.
+#   cp .env.example .env   (then edit the passwords)
+#   docker compose up --build
+# UI:  http://localhost:5180     API: http://localhost:8080/api/v1/health
+name: market-forge
+
+services:
+  mariadb:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?set it in .env}
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-marketforge}
+      MARIADB_USER: ${MARIADB_USER:-marketforge}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?set it in .env}
+    ports:
+      - "127.0.0.1:${MARIADB_PORT:-3306}:3306" # localhost only
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./scripts/mariadb-init:/docker-entrypoint-initdb.d:ro # creates the *_test database
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    build: ./backend
+    command: ["/app/migrate"]
+    environment:
+      MF_DATABASE_DSN: ${MARIADB_USER:-marketforge}:${MARIADB_PASSWORD}@tcp(mariadb:3306)/${MARIADB_DATABASE:-marketforge}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build: ./backend
+    command: ["/app/api"]
+    environment:
+      MF_DATABASE_DSN: ${MARIADB_USER:-marketforge}:${MARIADB_PASSWORD}@tcp(mariadb:3306)/${MARIADB_DATABASE:-marketforge}
+      MF_HTTP_ADDR: ":8080"
+      MF_COOKIE_SECURE: "false" # local http only
+      MF_LOG_LEVEL: ${MF_LOG_LEVEL:-info}
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/app/api", "healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npx vite --host 0.0.0.0"
+    environment:
+      MF_API_PROXY: http://api:8080
+    volumes:
+      - ./frontend:/app
+      - web-node-modules:/app/node_modules # keep Linux node_modules out of your Windows folder
+    ports:
+      - "127.0.0.1:5180:5180"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  mariadb-data:
+  web-node-modules:
