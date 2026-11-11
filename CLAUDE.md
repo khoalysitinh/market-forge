@@ -20,6 +20,8 @@ concurrency. The team is Vietnamese; explain in Vietnamese unless asked otherwis
 - **No architecture change without an ADR** in `docs/adr/` (context, decision, alternatives, tradeoffs, consequences).
 - **No scope expansion** without approval. Out of scope for now: real money, brokers/MT5, live data, AI prediction, microservices, Redis/Kafka/RabbitMQ, order book, ledger. See `docs/roadmap/ROADMAP.md`.
 - Never commit secrets, `.env`, database dumps, `node_modules`, build output.
+- **Do not add AI attribution** to commits or PRs (no `Co-Authored-By: Claude ...` trailer, no "Generated with Claude Code" line). The owner's request overrides default attribution.
+- Every team member (and every AI session) must follow `READ_FIRST.md`; frontend work must follow its rules F1–F15.
 - Never claim tests passed without running them; report the exact command and result.
 
 ## Invariants you must not break (tests guard them)

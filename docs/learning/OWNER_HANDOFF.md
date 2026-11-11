@@ -73,27 +73,20 @@ Cách trace:
 
 ## 8. Push lên GitHub — trạng thái và lệnh
 
-Trạng thái: repo **local** trên nhánh `main`, các commit theo milestone. **Chưa push.** Lý do: `https://github.com/khoalysitinh/market-forge` trả 404 (chưa tạo hoặc private), máy không có `gh` CLI hay credential để xác minh quyền sở hữu, nên không push bằng danh tính chưa xác minh.
+Remote `origin` = `https://github.com/khoalysitinh/market-forge.git`. Tác giả commit: `khoaly <lyanhkhoa426@gmail.com>` (owner xác nhận). Lịch sử đã bỏ các dòng `Co-Authored-By` của AI trước lần push đầu.
 
-⚠️ Kiểm tra git identity trước: repo đang dùng `user.email = lyanhkhoa426@gmail.com`. Nếu email GitHub của bạn khác (ví dụ `...425`), sửa trước khi push để commit gắn đúng tài khoản:
-
-```bash
-git config user.email "email-github-của-bạn"
-git commit --amend --reset-author --no-edit   # chỉ sửa commit cuối; với nhiều commit xem lệnh rebase bên dưới
-git rebase -r --root --exec "git commit --amend --no-edit --reset-author"   # sửa tác giả mọi commit (chỉ khi CHƯA push)
-```
-
-Tạo repo rỗng trên GitHub (web: New repository → tên `market-forge`, **không** tick README/.gitignore/license), rồi:
+Nếu repo chưa tồn tại: tạo repo rỗng trên GitHub (web: New repository → tên `market-forge`, **không** tick README/.gitignore/license), rồi:
 
 ```bash
 cd "C:\Users\Administrator\Downloads\MARKET FORGE"
-git remote add origin https://github.com/khoalysitinh/market-forge.git
-git remote -v                       # xác nhận đúng URL
+git remote -v                       # xác nhận đúng URL (origin đã được thêm)
 git status                          # phải sạch
 git push -u origin main             # KHÔNG dùng --force
 ```
 
 Sau khi push: vào tab **Actions** xem CI. Nếu CI đỏ, phát hành vẫn là **PARTIAL** cho đến khi sửa.
+
+Cho team vào: GitHub → repo → **Settings → Collaborators → Add people** (hoặc tạo Organization + team `frontend`). Bật **branch protection** cho `main`: bắt buộc PR, 1 review, CI xanh, cấm force-push. Yêu cầu mọi người đọc [READ_FIRST.md](../../READ_FIRST.md) trước.
 
 ## 9. 10 GitHub Issues đề xuất (dễ → khó)
 

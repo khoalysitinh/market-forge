@@ -2,6 +2,8 @@
 
 > **Train the decision. Not just the trade.**
 
+> 📌 **Thành viên mới (backend hay frontend): đọc [READ_FIRST.md](READ_FIRST.md) trước tiên.**
+
 MARKET FORGE là một **nền tảng luyện ra quyết định** cho một nhóm nhỏ trader/lập trình viên. Mọi người cùng xem một thị trường *giả lập*, mỗi người ghi lại quyết định **LONG / SHORT / WAIT** kèm luận điểm *trước khi* biết diễn biến, quyết định bị **niêm phong**, cả nhóm review chéo một cách **mù** (chưa thấy tương lai), rồi mới cùng **mở** diễn biến tiếp theo.
 
 ⚠️ **Đây không phải** hệ thống dự báo giá, bot kiếm tiền hay sàn giao dịch. v0.1 chỉ dùng **dữ liệu giả lập** (`SYNTHETIC MARKET DATA — NOT REAL NAS100`), không kết nối broker, không có tiền thật, không tính P&L.
