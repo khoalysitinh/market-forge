@@ -200,6 +200,8 @@ Xem [OWNER_HANDOFF.md](docs/learning/OWNER_HANDOFF.md) để biết chính xác 
 | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) | Kiến trúc, transaction, state machine, bảo mật, technical debt |
 | [docs/adr/](docs/adr/) | 5 Architecture Decision Records |
 | [docs/api/API.md](docs/api/API.md) | API contract: request, response, quyền, lỗi |
+| [docs/frontend/FRONTEND_GUIDE.md](docs/frontend/FRONTEND_GUIDE.md) | Hướng dẫn cho team frontend: chạy project, trạng thái → giao diện, từng màn hình |
+| [docs/frontend/API_SAMPLES.md](docs/frontend/API_SAMPLES.md) | Response thật của API ở từng trạng thái |
 | [docs/learning/BACKEND_LEARNING_PATH.md](docs/learning/BACKEND_LEARNING_PATH.md) | 15 bài học Go/backend từ chính source |
 | [docs/learning/OWNER_HANDOFF.md](docs/learning/OWNER_HANDOFF.md) | Bàn giao cho owner |
 | [docs/roadmap/ROADMAP.md](docs/roadmap/ROADMAP.md) | Phase 1–6 |

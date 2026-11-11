@@ -105,6 +105,8 @@ Mỗi invariant có test bảo vệ — xem [ARCHITECTURE §4](docs/architecture
 
 ## 10. Dành cho TEAM FRONTEND — triển khai FE bằng React
 
+> 👉 Sau mục này, đọc tiếp **[docs/frontend/FRONTEND_GUIDE.md](docs/frontend/FRONTEND_GUIDE.md)** — hướng dẫn từng bước: sản phẩm hoạt động thế nào, chạy project, bảng *trạng thái → giao diện*, từng màn hình gọi API nào. Response thật của API: **[docs/frontend/API_SAMPLES.md](docs/frontend/API_SAMPLES.md)**.
+
 ### 10.1 Nhiệm vụ
 
 Biến frontend tối thiểu hiện có ([frontend/](frontend/)) thành một giao diện **Trading Dojo** dùng được hằng ngày cho nhóm 3–6 người: rõ ràng, đúng luật, responsive, dark theme kiểu trading terminal — **trên đúng API hiện có**.
@@ -223,7 +225,7 @@ frontend/src/
 1. **File này.**
 2. [README.md](README.md) — cài đặt, chạy, test.
 3. [docs/product/PRODUCT.md](docs/product/PRODUCT.md) — sản phẩm.
-4. [docs/api/API.md](docs/api/API.md) — **bắt buộc với frontend**.
+4. Frontend: [docs/frontend/FRONTEND_GUIDE.md](docs/frontend/FRONTEND_GUIDE.md) → [API_SAMPLES.md](docs/frontend/API_SAMPLES.md) → [docs/api/API.md](docs/api/API.md) — **bắt buộc với frontend**.
 5. [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) — **bắt buộc với backend**.
 6. [docs/adr/](docs/adr/) — các quyết định kiến trúc.
 7. [CONTRIBUTING.md](CONTRIBUTING.md) — quy trình PR.
