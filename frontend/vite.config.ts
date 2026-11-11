@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // The dev server proxies /api to the Go API so the browser sees a single
 // origin: the session cookie stays first-party and no CORS is needed.
@@ -8,7 +9,7 @@ import react from "@vitejs/plugin-react";
 const apiTarget = process.env.MF_API_PROXY ?? "http://127.0.0.1:8080";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     // Localhost only by default. Docker Compose passes --host 0.0.0.0.
     // 5180 instead of Vite's default 5173 so it never collides with other
