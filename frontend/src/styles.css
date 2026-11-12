@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+:root {
+  /* Core LUNA palette */
+  --luna-100: #A7EBF2;
+  --luna-200: #54ACBF;
+  --luna-300: #26658C;
+  --luna-400: #023859;
+  --luna-500: #011C40;
+
+  /* Low-glare dark surfaces */
+  --luna-900: #000B1A;
+  --luna-950: #00050D;
+
+  /* Typography */
+  --text-primary: #F2F9FA;
+  --text-secondary: #7BA7BC;
+  --text-muted: #26658C;
+
+  /* Trading semantics */
+  --trade-long: #10B981;
+  --trade-long-bg: rgba(16, 185, 129, 0.10);
+  --trade-short: #F43F5E;
+  --trade-short-bg: rgba(244, 63, 94, 0.10);
+}
+
+@theme {
+  --color-luna-100: var(--luna-100);
+  --color-luna-200: var(--luna-200);
+  --color-luna-300: var(--luna-300);
+  --color-luna-400: var(--luna-400);
+  --color-luna-500: var(--luna-500);
+  --color-luna-900: var(--luna-900);
+  --color-luna-950: var(--luna-950);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-trade-long: var(--trade-long);
+  --color-trade-long-bg: var(--trade-long-bg);
+  --color-trade-short: var(--trade-short);
+  --color-trade-short-bg: var(--trade-short-bg);
+}

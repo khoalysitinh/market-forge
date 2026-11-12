@@ -3,16 +3,13 @@ import { useEffect, useRef, useState } from "react";
 type HeaderTheme = "light" | "dark";
 
 const NAV_LINKS = [
-  { label: "Product", href: "#product" },
-  { label: "Community", href: "#community" },
-  { label: "About", href: "#about" },
-  { label: "New", href: "#how-it-works", isNew: true },
+  { label: "Trade", href: "/trade" },
+  { label: "Community", href: "/#community" },
+  { label: "About", href: "/#about" },
+  { label: "New", href: "/#how-it-works", isNew: true },
 ];
 
-function NavigationLinks({ onNavigate, theme }: { onNavigate?: () => void; theme: HeaderTheme }) {
-  const textColor = theme === "light" ? "text-[#011c40]" : "text-white";
-  const focusColor = theme === "light" ? "focus-visible:outline-[#26658c]" : "focus-visible:outline-[#a7ebf2]";
-
+function NavigationLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       {NAV_LINKS.map((item) => (
@@ -20,15 +17,16 @@ function NavigationLinks({ onNavigate, theme }: { onNavigate?: () => void; theme
           key={item.label}
           href={item.href}
           onClick={onNavigate}
-          className={`group/nav relative inline-flex items-center gap-2 rounded-full px-3 py-2.5 font-sans text-xs font-semibold uppercase tracking-[0.08em] ${textColor} transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 ${focusColor} motion-reduce:transition-none sm:px-4 sm:text-sm`}
+          // Tăng chữ từ text-xs sm:text-sm -> text-sm sm:text-base và nới padding ngang sm:px-5
+          className="group/nav relative inline-flex items-center gap-2 rounded-full px-3.5 py-2.5 font-sans text-sm font-semibold uppercase tracking-[0.08em] text-white transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a7ebf2] motion-reduce:transition-none sm:px-5 sm:text-base"
         >
           {item.label}
           {item.isNew && (
-            <span aria-hidden="true" className="size-1.5 rounded-full bg-[#a7ebf2]" />
+            <span aria-hidden="true" className="size-2 rounded-full bg-[#a7ebf2]" />
           )}
           <span
             aria-hidden="true"
-            className="absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 bg-current transition-transform duration-200 group-hover/nav:scale-x-100 motion-reduce:transition-none"
+            className="absolute inset-x-5 bottom-1.5 h-px origin-left scale-x-0 bg-current transition-transform duration-200 group-hover/nav:scale-x-100 motion-reduce:transition-none"
           />
         </a>
       ))}
@@ -36,21 +34,21 @@ function NavigationLinks({ onNavigate, theme }: { onNavigate?: () => void; theme
   );
 }
 
-function AuthLinks({ onNavigate, theme }: { onNavigate?: () => void; theme: HeaderTheme }) {
+function AuthLinks({ onNavigate }: { onNavigate?: () => void }) {
   const [selected, setSelected] = useState<"login" | "signup">("login");
-  const idleText = theme === "light" ? "text-[#011c40]" : "text-white";
-  const border = theme === "light" ? "border-[#011c40]/30" : "border-white/35";
-  const focusOutline = theme === "light" ? "focus-visible:outline-[#26658c]" : "focus-visible:outline-[#a7ebf2]";
+  const idleText = "text-white";
+  const border = "border-white/35";
 
   return (
     <div
       role="group"
       aria-label="Account access"
-      className={`group/auth relative grid min-w-44 grid-cols-2 overflow-hidden rounded-full border ${border} bg-transparent p-1 font-sans text-xs font-semibold uppercase tracking-[0.06em] sm:min-w-48 sm:text-sm`}
+      // Tăng độ rộng nút từ sm:min-w-48 -> sm:min-w-56 và cỡ chữ lên text-sm sm:text-base
+      className={`group/auth relative grid min-w-48 grid-cols-2 overflow-hidden rounded-full border ${border} bg-transparent p-1.5 font-sans text-sm font-semibold uppercase tracking-[0.06em] sm:min-w-56 sm:text-base`}
     >
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-y-1 left-1 z-0 w-[calc(50%-0.25rem)] rounded-full border border-[#a7ebf2]/60 bg-[#a7ebf2] shadow-[0_2px_16px_rgba(167,235,242,0.18)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`pointer-events-none absolute inset-y-1.5 left-1.5 z-0 w-[calc(50%-0.375rem)] rounded-full border border-[#a7ebf2]/60 bg-[#a7ebf2] shadow-[0_2px_16px_rgba(167,235,242,0.18)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           selected === "signup" ? "translate-x-full" : "translate-x-0"
         }`}
       />
@@ -61,7 +59,7 @@ function AuthLinks({ onNavigate, theme }: { onNavigate?: () => void; theme: Head
           setSelected("login");
           onNavigate?.();
         }}
-        className={`relative z-10 rounded-full px-3 py-2.5 text-center transition-[opacity,color,font-weight] duration-200 motion-reduce:transition-none hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 ${focusOutline} group-hover/auth:opacity-55 group-focus-within/auth:opacity-70 ${
+        className={`relative z-10 rounded-full px-4 py-2.5 text-center transition-[opacity,color,font-weight] duration-200 motion-reduce:transition-none hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a7ebf2] group-hover/auth:opacity-55 group-focus-within/auth:opacity-70 ${
           selected === "login"
             ? "font-bold text-[#011c40] opacity-100"
             : `font-semibold ${idleText} opacity-80`
@@ -76,7 +74,7 @@ function AuthLinks({ onNavigate, theme }: { onNavigate?: () => void; theme: Head
           setSelected("signup");
           onNavigate?.();
         }}
-        className={`relative z-10 rounded-full px-3 py-2.5 text-center transition-[opacity,color,font-weight] duration-200 motion-reduce:transition-none hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 ${focusOutline} group-hover/auth:opacity-55 group-focus-within/auth:opacity-70 ${
+        className={`relative z-10 rounded-full px-4 py-2.5 text-center transition-[opacity,color,font-weight] duration-200 motion-reduce:transition-none hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a7ebf2] group-hover/auth:opacity-55 group-focus-within/auth:opacity-70 ${
           selected === "signup"
             ? "font-bold text-[#011c40] opacity-100"
             : `font-semibold ${idleText} opacity-80`
@@ -101,11 +99,8 @@ export function AppHeader() {
       frame = window.requestAnimationFrame(() => {
         const header = headerRef.current;
         const headerBar = header?.querySelector<HTMLElement>("[data-header-bar]");
-        const headerBottom = headerBar?.getBoundingClientRect().bottom ?? 84;
+        const headerBottom = headerBar?.getBoundingClientRect().bottom ?? 92;
         const y = Math.min(Math.ceil(headerBottom + 2), window.innerHeight - 1);
-        // The expanded mobile menu sits at this point and would hide the section
-        // underneath from elementFromPoint. Hide it from hit-testing for this
-        // synchronous read, then restore it before the browser paints.
         const previousVisibility = header?.style.visibility;
         if (header) header.style.visibility = "hidden";
         const underHeader = document.elementFromPoint(Math.floor(window.innerWidth / 2), y);
@@ -114,7 +109,7 @@ export function AppHeader() {
         const nextTheme = surface?.dataset.headerTheme;
 
         if (nextTheme === "light" || nextTheme === "dark") {
-          setTheme((current) => current === nextTheme ? current : nextTheme);
+          setTheme((current) => (current === nextTheme ? current : nextTheme));
         }
       });
     }
@@ -135,35 +130,35 @@ export function AppHeader() {
   }
 
   return (
-    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 bg-transparent px-4 backdrop-blur-[2px] sm:px-6">
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 bg-[#011c40]/75 px-4 backdrop-blur-md sm:px-8 lg:px-12">
       <div className={`pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent ${theme === "light" ? "via-[#26658c]/30" : "via-[#a7ebf2]/35"} to-transparent`} />
-      <div className="mx-auto max-w-6xl">
-        <div data-header-bar className="flex min-h-[84px] items-center justify-between gap-3 lg:gap-6">
-          <a className="inline-flex shrink-0 items-center gap-3" href="#/" aria-label="Market Forge home">
+      
+      {/* Mở rộng từ max-w-6xl lên max-w-[1440px] để đẩy Logo sang trái và Auth sang phải */}
+      <div className="mx-auto max-w-[1440px]">
+        <div data-header-bar className="flex min-h-[92px] items-center justify-between gap-4 lg:gap-8">
+          <a className="inline-flex shrink-0 items-center" href="/" aria-label="Market Forge home">
+            {/* Tăng kích thước logo: h-12 sm:h-14 lg:h-16 */}
             <img
-              className="size-10 object-contain sm:size-12"
-              src="https://i.ibb.co/TDzWCTrr/Bi-u-t-ng-F-m-i-t-n-th-y-tinh-xanh-ng-c.png"
-              alt=""
-              width="48"
-              height="48"
-              aria-hidden="true"
+              className="h-12 w-auto object-contain sm:h-14 lg:h-16"
+              src="/images/market-forge-logo-full.png"
+              alt="Market Forge"
+              width="1936"
+              height="350"
             />
-            <span className={`font-sans text-lg font-semibold tracking-[-0.04em] transition-colors duration-200 motion-reduce:transition-none sm:text-xl ${theme === "light" ? "text-[#011c40]" : "text-white"}`}>
-              MARKET FORGE
-            </span>
           </a>
 
-          <nav aria-label="Main navigation" className="hidden items-center gap-0.5 lg:flex">
-            <NavigationLinks theme={theme} />
+          {/* Tăng khoảng cách giữa các mục menu: gap-1 xl:gap-3 */}
+          <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex xl:gap-3">
+            <NavigationLinks />
           </nav>
 
           <div className="hidden lg:block">
-            <AuthLinks theme={theme} />
+            <AuthLinks />
           </div>
 
           <button
             type="button"
-            className={`inline-flex size-10 items-center justify-center rounded-full border bg-transparent font-sans text-xl transition-transform duration-200 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 motion-reduce:transition-none lg:hidden ${theme === "light" ? "border-[#011c40]/30 text-[#011c40] focus-visible:outline-[#26658c]" : "border-white/35 text-white focus-visible:outline-[#a7ebf2]"}`}
+            className="inline-flex size-11 items-center justify-center rounded-full border border-white/35 bg-transparent font-sans text-xl text-white transition-transform duration-200 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a7ebf2] motion-reduce:transition-none lg:hidden"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
@@ -175,13 +170,13 @@ export function AppHeader() {
 
         <div
           id="mobile-navigation"
-          className={`${menuOpen ? "block" : "hidden"} border-t pb-4 pt-3 backdrop-blur-md lg:hidden ${theme === "light" ? "border-[#011c40]/20" : "border-white/25"}`}
+          className={`${menuOpen ? "block" : "hidden"} border-t border-white/20 bg-[#011c40]/90 pb-4 pt-3 backdrop-blur-md lg:hidden`}
         >
           <nav aria-label="Mobile navigation" className="flex flex-col items-start">
-            <NavigationLinks onNavigate={closeMenu} theme={theme} />
+            <NavigationLinks onNavigate={closeMenu} />
           </nav>
-          <div className={`mt-3 border-t pt-3 ${theme === "light" ? "border-[#011c40]/20" : "border-white/20"}`}>
-            <AuthLinks onNavigate={closeMenu} theme={theme} />
+          <div className="mt-3 border-t border-white/20 pt-3">
+            <AuthLinks onNavigate={closeMenu} />
           </div>
         </div>
       </div>
