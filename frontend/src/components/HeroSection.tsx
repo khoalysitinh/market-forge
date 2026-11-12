@@ -1,18 +1,13 @@
+import { Trading3DBackground } from './Trading3DBackground';
+
 export function HeroSection() {
   return (
     <section data-header-theme="dark" className="relative isolate flex min-h-svh items-center overflow-hidden bg-[#011c40] text-white">
-      <img
-        src="/images/bannerhero.png"
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 -z-20 size-full object-cover object-[64%_center]"
-      />
-      <div className="absolute inset-0 -z-10 bg-linear-to-r from-[#011c40]/95 via-[#011c40]/85 to-[#011c40]/25" />
-      <div className="absolute inset-0 -z-10 bg-linear-to-t from-[#011c40]/50 via-transparent to-[#011c40]/15" />
+      {/* Dynamic 2D/3D Glowing Trading Waves, Candlesticks & Parallax */}
+      <Trading3DBackground />
 
-      <div className="mx-auto w-full max-w-6xl px-5 py-20 pt-32 sm:px-8 sm:py-28 sm:pt-36">
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-20 pt-32 sm:px-8 sm:py-28 sm:pt-36">
         <div className="max-w-3xl">
-
           <h1 className="max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
             Where Solid Strategy Meets Liquid Markets.
           </h1>
