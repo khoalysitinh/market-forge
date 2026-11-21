@@ -169,8 +169,6 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [referralOpen, setReferralOpen] = useState(false);
-  const [referral, setReferral] = useState("");
   const [message, setMessage] = useState("");
   const isLogin = mode === "login";
   const isVNPhone = isVietnamPhonePrefix(identifier.trim());
@@ -251,17 +249,10 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
 
           {isLogin ? <>
           {step === "identifier" && <div className="mt-7 space-y-3">
-            {isLogin ? <>
-              <ProviderButton provider="Passkey" onClick={() => providerNotice("Passkey")} />
-              <ProviderButton provider="Google" onClick={() => providerNotice("Google")} />
-              <ProviderButton provider="Gmail" onClick={() => providerNotice("Gmail")} />
-              <AuthDivider />
-            </> : <>
-              <ProviderButton provider="Google" onClick={() => providerNotice("Google")} />
-              <ProviderButton provider="Gmail" onClick={() => providerNotice("Gmail")} />
-              <button type="button" onClick={() => setMessage("More sign-in providers will be available here.")} className="h-14 w-full rounded-full bg-slate-100 text-base font-medium text-slate-900 transition-colors hover:bg-slate-200">More options</button>
-              <AuthDivider />
-            </>}
+            <ProviderButton provider="Passkey" onClick={() => providerNotice("Passkey")} />
+            <ProviderButton provider="Google" onClick={() => providerNotice("Google")} />
+            <ProviderButton provider="Gmail" onClick={() => providerNotice("Gmail")} />
+            <AuthDivider />
           </div>}
 
           <form onSubmit={handleContinue} className="mt-5 space-y-4" noValidate>
@@ -271,10 +262,6 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
                 {isVNPhone && <span className="shrink-0 pl-4 text-sm text-slate-500" aria-label="Việt Nam"><span aria-hidden="true">🇻🇳</span></span>}
                 <input id="auth-identifier" type="text" inputMode={isVNPhone ? "tel" : "email"} autoComplete="username" value={identifier} onChange={(event) => setIdentifier(event.target.value)} placeholder="Enter your email or phone number" className="h-full min-w-0 flex-1 rounded-xl bg-transparent px-4 text-base text-slate-950 outline-none placeholder:text-slate-400" />
               </div>
-              {mode === "signup" && <>
-                <button type="button" aria-expanded={referralOpen} onClick={() => setReferralOpen((open) => !open)} className="flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-[#26658c]">Referral code (optional)<span aria-hidden="true" className={`transition-transform ${referralOpen ? "rotate-180" : ""}`}>⌄</span></button>
-                {referralOpen && <input aria-label="Referral code (optional)" value={referral} onChange={(event) => setReferral(event.target.value)} placeholder="Enter referral code" className="h-14 w-full rounded-xl bg-slate-100 px-4 text-base outline-none focus:ring-2 focus:ring-[#54acbf]/50" />}
-              </>}
             </> : <>
               <label htmlFor="auth-password" className="block text-sm font-medium text-slate-600">Password</label>
               <div className="flex h-16 items-center rounded-xl border border-transparent bg-slate-100 transition focus-within:border-[#54acbf] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#54acbf]/15">

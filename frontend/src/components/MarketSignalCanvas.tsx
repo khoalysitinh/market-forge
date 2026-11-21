@@ -92,13 +92,14 @@ export function MarketSignalCanvas() {
     const motionScale = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.45 : 1;
 
     function resize() {
+      if (!canvas || !context) return;
       const rect = canvas.getBoundingClientRect();
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
       canvas.width = Math.round(width * pixelRatio);
       canvas.height = Math.round(height * pixelRatio);
-      context!.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       candles = Array.from({ length: CANDLE_COUNT }, () => makeCandle(width, true));
       particles = Array.from({ length: PARTICLE_COUNT }, () => makeParticle(width, true));
       previousTime = 0;

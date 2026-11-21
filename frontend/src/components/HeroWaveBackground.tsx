@@ -31,7 +31,7 @@ export function HeroWaveBackground() {
       // Thiết lập dải chuyển màu (Gradient) ngang qua màn hình
       gradient = context!.createLinearGradient(0, 0, width, 0);
       gradient.addColorStop(0, '#007BA7');   // Hồng san hô ở bên trái
-      gradient.addColorStop(0.5, '#DBF2FC'); // Xanh băng ở vùng sáng giữa
+      gradient.addColorStop(0.5, '#DBF2FC '); // Xanh băng ở vùng sáng giữa
       gradient.addColorStop(1, '#FF2D95');   // Xanh navy đậm chìm dần về phải
 
       // Điều chỉnh mật độ line theo chiều rộng màn hình để luôn dày dặn

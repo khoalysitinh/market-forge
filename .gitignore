@@ -35,3 +35,7 @@ Thumbs.db
 
 # Claude local settings
 .claude/settings.local.json
+
+# Third-party Codex/Agent skills (restorable via skills-lock.json)
+.agents/skills/*
+!.agents/skills/market-forge-frontend/

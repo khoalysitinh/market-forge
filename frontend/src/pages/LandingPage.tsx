@@ -179,7 +179,7 @@ function GroupPractice() {
 
 function ProductBoundaries() {
   return (
-    <section data-header-theme="dark" className="landing-hero relative h-[300px] scroll-mt-24 overflow-hidden sm:h-[360px] lg:h-[420px]">
+    <section data-header-theme="dark" className="relative h-[300px] scroll-mt-24 overflow-hidden bg-[#0A0A0A] sm:h-[360px] lg:h-[420px]">
       <HeroWaveBackground />
     </section>
   );

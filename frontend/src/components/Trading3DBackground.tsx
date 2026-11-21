@@ -50,9 +50,9 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
     if (!ctx) return;
 
     const rootStyle = getComputedStyle(document.documentElement);
-    const forgeIce = rootStyle.getPropertyValue('--forge-ice').trim() || '#DBF2FC';
-    const forgeNavy = rootStyle.getPropertyValue('--forge-navy').trim() || '#072059';
-    const forgeCoral = rootStyle.getPropertyValue('--forge-coral').trim() || '#FD6E88';
+    const forgeIce = rootStyle.getPropertyValue('--tech-ice').trim() || '#DBF2FC';
+    const forgeNavy = rootStyle.getPropertyValue('--tech-blue').trim() || '#007BA7';
+    const forgeCoral = rootStyle.getPropertyValue('--tech-pink').trim() || '#FF2D95';
     const rgba = (hex: string, alpha: number) => {
       const channels = hex.replace('#', '').match(/[A-Fa-f0-9]{2}/g);
       if (!channels || channels.length < 3) return `rgba(219, 242, 252, ${alpha})`;
