@@ -1,7 +1,13 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { request } from "../api/client";
 
 type AuthMode = "login" | "signup";
 type AuthStep = "identifier" | "password";
+
+function isVietnamPhonePrefix(value: string): boolean {
+  const normalized = value.replace(/[\s().-]/g, "");
+  return /^(?:0\d{0,9}|\+84\d{0,9})$/.test(normalized);
+}
 
 function AuthDivider() {
   return <div className="my-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200"/><span>or continue with email</span><span className="h-px flex-1 bg-slate-200"/></div>;
@@ -17,14 +23,157 @@ function ProviderButton({ provider, onClick }: { provider: "Google" | "Gmail" | 
   </button>;
 }
 
+type UsernameCheck = "idle" | "checking" | "available" | "taken" | "error";
+
+function usernameSuggestion(fullName: string): string {
+  return fullName
+    .trim()
+    .toLowerCase()
+    .replace(/đ/g, "d")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 32);
+}
+
+function SignupForm({ onSwitchMode }: { onSwitchMode: () => void }) {
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [usernameEdited, setUsernameEdited] = useState(false);
+  const [usernameCheck, setUsernameCheck] = useState<UsernameCheck>("idle");
+  const [checkedUsername, setCheckedUsername] = useState("");
+  const [checkAttempt, setCheckAttempt] = useState(0);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (!usernameEdited) setUsername(usernameSuggestion(fullName));
+  }, [fullName, usernameEdited]);
+
+  useEffect(() => {
+    const normalized = username.trim().toLowerCase();
+    if (!/^[a-z0-9_]{3,32}$/.test(normalized)) {
+      setUsernameCheck("idle");
+      setCheckedUsername("");
+      return;
+    }
+
+    const controller = new AbortController();
+    setUsernameCheck("checking");
+    setCheckedUsername("");
+    const timer = window.setTimeout(() => {
+      request<{ available: boolean }>(`/auth/username-availability?username=${encodeURIComponent(normalized)}`, {
+        signal: controller.signal,
+      }).then((result) => {
+        if (controller.signal.aborted) return;
+        setCheckedUsername(normalized);
+        setUsernameCheck(result.available ? "available" : "taken");
+      })
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            setCheckedUsername(normalized);
+            setUsernameCheck("error");
+          }
+        });
+    }, 350);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [username, checkAttempt]);
+
+  const validName = fullName.trim().length > 0 && [...fullName.trim()].length <= 64;
+  const validUsername = /^[a-z0-9_]{3,32}$/.test(username.trim().toLowerCase());
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const passwordBytes = new TextEncoder().encode(password).length;
+  const validPassword = [...password].length >= 10 && passwordBytes <= 72;
+  const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
+  const currentUsername = username.trim().toLowerCase();
+  const usernameIsAvailable = usernameCheck === "available" && checkedUsername === currentUsername;
+  const canSubmit = validName && validUsername && usernameIsAvailable && validEmail &&
+    validPassword && passwordsMatch && acceptedTerms;
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canSubmit) return;
+    setMessage("Thông tin hợp lệ. Cần nối API POST /auth/register để tạo tài khoản.");
+  }
+
+  return (
+    <>
+      <form onSubmit={submit} className="mt-7 space-y-4" noValidate>
+        <div className="space-y-1.5">
+          <label htmlFor="signup-full-name" className="block text-sm font-medium text-slate-600">Họ &amp; Tên</label>
+          <input id="signup-full-name" autoComplete="name" required aria-invalid={!validName && fullName.length > 0} aria-describedby="signup-name-help" value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Nhập họ và tên" className="h-14 w-full rounded-xl border border-transparent bg-slate-100 px-4 text-base text-slate-950 outline-none transition focus:border-[#54acbf] focus:bg-white focus:ring-4 focus:ring-[#54acbf]/15 placeholder:text-slate-400" />
+          <p id="signup-name-help" aria-live="polite" className="text-xs text-rose-600">{fullName.trim().length > 64 ? "Họ & Tên tối đa 64 ký tự." : ""}</p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="signup-username" className="block text-sm font-medium text-slate-600">Username</label>
+          <div className="flex h-14 items-center rounded-xl border border-transparent bg-slate-100 transition focus-within:border-[#54acbf] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#54acbf]/15">
+            <span aria-hidden="true" className="select-none pl-4 text-base text-slate-400">@</span>
+            <input id="signup-username" autoComplete="username" required aria-invalid={!validUsername && username.length > 0 || usernameCheck === "taken"} value={username} onChange={(event) => { setUsernameEdited(true); setUsername(event.target.value.toLowerCase()); }} placeholder="username" aria-describedby="signup-username-help" className="h-full min-w-0 flex-1 bg-transparent px-2 text-base text-slate-950 outline-none placeholder:text-slate-400" />
+          </div>
+          <p id="signup-username-help" aria-live="polite" className="min-h-4 text-xs text-slate-500">
+            {usernameCheck === "checking" ? "Đang kiểm tra username…" :
+              usernameCheck === "available" ? "Username này có thể sử dụng." :
+                usernameCheck === "taken" ? "Username đã được sử dụng. Hãy chọn tên khác." :
+                  usernameCheck === "error" ? <>Không thể kiểm tra username lúc này. <button type="button" className="font-semibold text-[#26658c] underline" onClick={() => setCheckAttempt((attempt) => attempt + 1)}>Thử lại</button></> :
+                    "3–32 ký tự: chữ thường, số hoặc dấu gạch dưới."}
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="signup-email" className="block text-sm font-medium text-slate-600">Email</label>
+          <input id="signup-email" type="email" autoComplete="email" required aria-invalid={!validEmail && email.length > 0} aria-describedby="signup-email-help" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" className="h-14 w-full rounded-xl border border-transparent bg-slate-100 px-4 text-base text-slate-950 outline-none transition focus:border-[#54acbf] focus:bg-white focus:ring-4 focus:ring-[#54acbf]/15 placeholder:text-slate-400" />
+          <p id="signup-email-help" aria-live="polite" className="text-xs text-rose-600">{email.length > 0 && !validEmail ? "Vui lòng nhập email hợp lệ." : ""}</p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="signup-password" className="block text-sm font-medium text-slate-600">Mật khẩu</label>
+          <div className="flex h-14 items-center rounded-xl border border-transparent bg-slate-100 transition focus-within:border-[#54acbf] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#54acbf]/15">
+            <input id="signup-password" type={showPassword ? "text" : "password"} autoComplete="new-password" required aria-invalid={password.length > 0 && !validPassword} aria-describedby="signup-password-help" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Ít nhất 10 ký tự" className="h-full min-w-0 flex-1 bg-transparent px-4 text-base text-slate-950 outline-none placeholder:text-slate-400" />
+            <button type="button" onClick={() => setShowPassword((shown) => !shown)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} className="mr-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-200">{showPassword ? "Ẩn" : "Hiện"}</button>
+          </div>
+          <p id="signup-password-help" aria-live="polite" className="text-xs text-slate-500">{passwordBytes > 72 ? "Mật khẩu tối đa 72 byte." : password && !validPassword ? "Mật khẩu cần ít nhất 10 ký tự." : "Ít nhất 10 ký tự, tối đa 72 byte."}</p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="signup-confirm-password" className="block text-sm font-medium text-slate-600">Nhập lại mật khẩu</label>
+          <input id="signup-confirm-password" type={showPassword ? "text" : "password"} autoComplete="new-password" required aria-invalid={confirmPassword.length > 0 && !passwordsMatch} aria-describedby="signup-confirm-help" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Nhập lại mật khẩu" className="h-14 w-full rounded-xl border border-transparent bg-slate-100 px-4 text-base text-slate-950 outline-none transition focus:border-[#54acbf] focus:bg-white focus:ring-4 focus:ring-[#54acbf]/15 placeholder:text-slate-400" />
+          <p id="signup-confirm-help" aria-live="polite" className="text-xs text-rose-600">{confirmPassword && !passwordsMatch ? "Hai mật khẩu chưa khớp." : ""}</p>
+        </div>
+
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-5 text-slate-600">
+          <input type="checkbox" required checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-0.5 size-4 accent-[#54acbf]" />
+          <span>Tôi đồng ý với <a href="#terms" className="font-medium text-[#26658c] underline">Điều khoản sử dụng</a> và <a href="#privacy" className="font-medium text-[#26658c] underline">Chính sách quyền riêng tư</a>.</span>
+        </label>
+
+        {message && <p role="status" className="rounded-xl border border-[#54acbf]/25 bg-[#54acbf]/10 px-3 py-2.5 text-xs leading-5 text-[#023859]">{message}</p>}
+        {!canSubmit && <p id="signup-submit-help" aria-live="polite" className="text-center text-xs text-slate-500">Điền đầy đủ thông tin, chọn username còn trống và đồng ý điều khoản để đăng ký.</p>}
+        <button type="submit" disabled={!canSubmit} aria-describedby={!canSubmit ? "signup-submit-help" : undefined} className={`h-14 w-full rounded-full px-5 text-lg font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26658c] ${canSubmit ? "bg-[#54acbf] text-[#00050d] hover:bg-[#a7ebf2]" : "cursor-not-allowed bg-slate-200 text-slate-400"}`}>Đăng ký</button>
+      </form>
+      <p className="mt-6 text-center text-base text-slate-500">Đã có tài khoản? <button type="button" onClick={onSwitchMode} className="font-semibold text-[#26658c] hover:text-[#011c40]">Đăng nhập</button></p>
+    </>
+  );
+}
+
 export function AuthPage({ mode }: { mode: AuthMode }) {
   const [step, setStep] = useState<AuthStep>("identifier");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [referralOpen, setReferralOpen] = useState(false);
   const [referral, setReferral] = useState("");
   const [message, setMessage] = useState("");
   const isLogin = mode === "login";
+  const isVNPhone = isVietnamPhonePrefix(identifier.trim());
 
   function goBack() {
     if (window.history.length > 1) window.history.back();
@@ -53,8 +202,8 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       setStep("password");
       return;
     }
-    if (password.length < 8) {
-      setMessage("Your password must be at least 8 characters.");
+    if (password.length < 10) {
+      setMessage("Your password must be at least 10 characters.");
       return;
     }
     setMessage(isLogin
@@ -100,6 +249,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
             {step === "password" && <button type="button" onClick={() => { setStep("identifier"); setPassword(""); setMessage(""); }} className="rounded-full px-3 py-2 text-xs font-semibold text-[#26658c] hover:bg-slate-100">Change</button>}
           </div>
 
+          {isLogin ? <>
           {step === "identifier" && <div className="mt-7 space-y-3">
             {isLogin ? <>
               <ProviderButton provider="Passkey" onClick={() => providerNotice("Passkey")} />
@@ -117,14 +267,20 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
           <form onSubmit={handleContinue} className="mt-5 space-y-4" noValidate>
             {step === "identifier" ? <>
               <label htmlFor="auth-identifier" className="block text-sm font-medium text-slate-600">Email or phone number</label>
-              <input id="auth-identifier" type="text" autoComplete="username" value={identifier} onChange={(event) => setIdentifier(event.target.value)} placeholder="Enter your email or phone number" className="h-16 w-full rounded-xl border border-transparent bg-slate-100 px-4 text-base text-slate-950 outline-none transition focus:border-[#54acbf] focus:bg-white focus:ring-4 focus:ring-[#54acbf]/15 placeholder:text-slate-400" />
+              <div className="flex h-16 items-center rounded-xl border border-transparent bg-slate-100 transition focus-within:border-[#54acbf] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#54acbf]/15">
+                {isVNPhone && <span className="shrink-0 pl-4 text-sm text-slate-500" aria-label="Việt Nam"><span aria-hidden="true">🇻🇳</span></span>}
+                <input id="auth-identifier" type="text" inputMode={isVNPhone ? "tel" : "email"} autoComplete="username" value={identifier} onChange={(event) => setIdentifier(event.target.value)} placeholder="Enter your email or phone number" className="h-full min-w-0 flex-1 rounded-xl bg-transparent px-4 text-base text-slate-950 outline-none placeholder:text-slate-400" />
+              </div>
               {mode === "signup" && <>
                 <button type="button" aria-expanded={referralOpen} onClick={() => setReferralOpen((open) => !open)} className="flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-[#26658c]">Referral code (optional)<span aria-hidden="true" className={`transition-transform ${referralOpen ? "rotate-180" : ""}`}>⌄</span></button>
                 {referralOpen && <input aria-label="Referral code (optional)" value={referral} onChange={(event) => setReferral(event.target.value)} placeholder="Enter referral code" className="h-14 w-full rounded-xl bg-slate-100 px-4 text-base outline-none focus:ring-2 focus:ring-[#54acbf]/50" />}
               </>}
             </> : <>
               <label htmlFor="auth-password" className="block text-sm font-medium text-slate-600">Password</label>
-              <input id="auth-password" type="password" autoComplete={isLogin ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter password (8+ characters)" className="h-16 w-full rounded-xl border border-transparent bg-slate-100 px-4 text-base text-slate-950 outline-none transition focus:border-[#54acbf] focus:bg-white focus:ring-4 focus:ring-[#54acbf]/15 placeholder:text-slate-400" />
+              <div className="flex h-16 items-center rounded-xl border border-transparent bg-slate-100 transition focus-within:border-[#54acbf] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#54acbf]/15">
+                <input id="auth-password" type={showPassword ? "text" : "password"} autoComplete={isLogin ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter password (10+ characters)" className="h-full min-w-0 flex-1 rounded-xl bg-transparent px-4 text-base text-slate-950 outline-none placeholder:text-slate-400" />
+                <button type="button" onClick={() => setShowPassword((shown) => !shown)} aria-label={showPassword ? "Hide password" : "Show password"} className="mr-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-200">{showPassword ? "Hide" : "Show"}</button>
+              </div>
               {isLogin && <button type="button" onClick={() => setMessage("Password recovery will be available when account services are connected.")} className="text-xs font-semibold text-[#26658c] hover:text-[#011c40]">Forgot password?</button>}
             </>}
 
@@ -134,6 +290,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
 
           <p className="mt-7 text-center text-base text-slate-500">{isLogin ? "Don't have an account?" : "Already have an account?"}{" "}<a href={isLogin ? "#/signup" : "#/login"} onClick={(event) => { event.preventDefault(); switchAuthMode(isLogin ? "signup" : "login"); }} className="font-semibold text-[#26658c] hover:text-[#011c40]">{isLogin ? "Sign up" : "Log in"}</a></p>
           <p className="mt-5 text-center text-xs leading-6 text-slate-400">By continuing, you agree to the <button type="button" onClick={() => setMessage("Terms of Use will be available soon.")} className="underline underline-offset-2">Terms of Use</button> and <button type="button" onClick={() => setMessage("Privacy Policy will be available soon.")} className="underline underline-offset-2">Privacy Policy</button>.</p>
+          </> : <SignupForm onSwitchMode={() => switchAuthMode("login")} />}
         </div>
       </section>
     </div>

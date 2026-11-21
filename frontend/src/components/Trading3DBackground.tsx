@@ -49,6 +49,17 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
+    const rootStyle = getComputedStyle(document.documentElement);
+    const forgeIce = rootStyle.getPropertyValue('--forge-ice').trim() || '#DBF2FC';
+    const forgeNavy = rootStyle.getPropertyValue('--forge-navy').trim() || '#072059';
+    const forgeCoral = rootStyle.getPropertyValue('--forge-coral').trim() || '#FD6E88';
+    const rgba = (hex: string, alpha: number) => {
+      const channels = hex.replace('#', '').match(/[A-Fa-f0-9]{2}/g);
+      if (!channels || channels.length < 3) return `rgba(219, 242, 252, ${alpha})`;
+      const [r, g, b] = channels.map((channel) => Number.parseInt(channel, 16));
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+
     let animationFrameId: number;
     let width = (canvas.width = container.clientWidth);
     let height = (canvas.height = container.clientHeight);
@@ -198,7 +209,7 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         x: Math.random() * width,
         y: Math.random() * height,
         radius: Math.random() * 2.2 + 1,
-        color: isCyan ? '#a7ebf2' : '#ffffff',
+        color: isCyan ? forgeIce : forgeCoral,
         vx: -0.4 - Math.random() * 0.4,
         vy: -0.2 - Math.random() * 0.3,
         alpha: Math.random() * 0.6 + 0.2,
@@ -276,14 +287,14 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         logoCenterY,
         width * 0.45
       );
-      cyanGlow.addColorStop(0, `rgba(167, 235, 242, ${glowIntensity})`);
-      cyanGlow.addColorStop(0.5, `rgba(56, 189, 248, ${glowIntensity * 0.6})`);
-      cyanGlow.addColorStop(1, 'rgba(1, 28, 64, 0)');
+      cyanGlow.addColorStop(0, rgba(forgeIce, glowIntensity));
+      cyanGlow.addColorStop(0.5, rgba(forgeCoral, glowIntensity * 0.42));
+      cyanGlow.addColorStop(1, rgba(forgeNavy, 0));
       ctx.fillStyle = cyanGlow;
       ctx.fillRect(0, 0, width, height);
 
       // --- LAYER 1: Subtle Cyber Grid ---
-      ctx.strokeStyle = `rgba(167, 235, 242, ${0.06 * (1 - morphT * 0.5)})`;
+      ctx.strokeStyle = rgba(forgeIce, 0.06 * (1 - morphT * 0.5));
       ctx.lineWidth = 1;
 
       const gridSpacingY = 70;
@@ -320,13 +331,13 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         ctx.save();
         ctx.globalAlpha = volAlpha;
         if (vb.isUp) {
-          ctx.fillStyle = '#011c40';
-          ctx.strokeStyle = 'rgba(167, 235, 242, 0.6)';
+          ctx.fillStyle = forgeNavy;
+          ctx.strokeStyle = rgba(forgeIce, 0.6);
           ctx.lineWidth = 1;
           ctx.fillRect(x - 2, volBaseY - barH, 4, barH);
           ctx.strokeRect(x - 2, volBaseY - barH, 4, barH);
         } else {
-          ctx.fillStyle = '#ffffff';
+          ctx.fillStyle = forgeCoral;
           ctx.fillRect(x - 2, volBaseY - barH, 4, barH);
         }
         ctx.restore();
@@ -378,9 +389,9 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         ctx.restore();
       };
 
-      drawNeonWave(0.35, 'rgba(56, 189, 248, 0.5)', 18, 2, 0.6);
-      drawNeonWave(0.0, '#a7ebf2', 26, 3.2, 0.95);
-      drawNeonWave(0.0, '#ffffff', 8, 1.2, 0.85);
+      drawNeonWave(0.35, rgba(forgeCoral, 0.5), 18, 2, 0.6);
+      drawNeonWave(0.0, forgeIce, 26, 3.2, 0.95);
+      drawNeonWave(0.0, rgba(forgeIce, 0.8), 8, 1.2, 0.85);
 
       // --- LAYER 4: ACTIVE CANDLESTICKS & MORPHING TO LOGO ---
       let highestX = 0;
@@ -440,40 +451,40 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
 
         if (c.isUp) {
           // ==========================================
-          // NẾN TĂNG: MÀU #011C40 VIỀN CYAN SẮC NÉT
+          // Rising candles use the ice and navy landing palette.
           // ==========================================
-          ctx.shadowColor = 'rgba(167, 235, 242, 0.7)';
+          ctx.shadowColor = rgba(forgeIce, 0.7);
           ctx.shadowBlur = 10;
 
           // Wick
-          ctx.strokeStyle = '#a7ebf2';
+          ctx.strokeStyle = forgeIce;
           ctx.lineWidth = 1.6 * candleScale;
           ctx.beginPath();
           ctx.moveTo(currentX, currentY - c.high * candleScale);
           ctx.lineTo(currentX, currentY + Math.abs(c.low) * candleScale);
           ctx.stroke();
 
-          // Body: #011C40
-          ctx.fillStyle = '#011c40';
+          // Navy body
+          ctx.fillStyle = forgeNavy;
           ctx.fillRect(currentX - bodyW / 2, bodyTop, bodyW, bodyH);
 
-          // Outline: #a7ebf2
-          ctx.strokeStyle = '#a7ebf2';
+          // Ice outline
+          ctx.strokeStyle = forgeIce;
           ctx.lineWidth = 1.8;
           ctx.strokeRect(currentX - bodyW / 2, bodyTop, bodyW, bodyH);
 
           // Center shine
-          ctx.fillStyle = 'rgba(167, 235, 242, 0.5)';
+          ctx.fillStyle = rgba(forgeIce, 0.5);
           ctx.fillRect(currentX - 0.75, bodyTop + 2, 1.5, Math.max(1, bodyH - 4));
         } else {
           // ==========================================
           // NẾN GIẢM: MÀU TRẮNG PHÁT QUANG RỰC RỠ
           // ==========================================
-          ctx.shadowColor = 'rgba(255, 255, 255, 0.85)';
+          ctx.shadowColor = rgba(forgeCoral, 0.7);
           ctx.shadowBlur = 15;
 
           // Wick
-          ctx.strokeStyle = '#ffffff';
+          ctx.strokeStyle = forgeCoral;
           ctx.lineWidth = 1.6 * candleScale;
           ctx.beginPath();
           ctx.moveTo(currentX, currentY - c.high * candleScale);
@@ -481,7 +492,7 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
           ctx.stroke();
 
           // Body: #ffffff
-          ctx.fillStyle = '#ffffff';
+          ctx.fillStyle = forgeCoral;
           ctx.fillRect(currentX - bodyW / 2, bodyTop, bodyW, bodyH);
         }
 
@@ -497,7 +508,7 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         const liveY = leadBaseY + liveTick;
 
         ctx.save();
-        ctx.strokeStyle = lead.isUp ? '#a7ebf2' : '#ffffff';
+        ctx.strokeStyle = lead.isUp ? forgeIce : forgeCoral;
         ctx.lineWidth = 1.2;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -506,15 +517,15 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         ctx.stroke();
 
         ctx.setLineDash([]);
-        ctx.shadowColor = lead.isUp ? '#a7ebf2' : '#ffffff';
+        ctx.shadowColor = lead.isUp ? forgeIce : forgeCoral;
         ctx.shadowBlur = 15;
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = forgeIce;
         ctx.beginPath();
         ctx.arc(leadX, liveY, 3.5, 0, Math.PI * 2);
         ctx.fill();
 
         const ringR = 6 + Math.abs(Math.sin(time * 4)) * 5;
-        ctx.strokeStyle = lead.isUp ? 'rgba(167, 235, 242, 0.6)' : 'rgba(255, 255, 255, 0.7)';
+        ctx.strokeStyle = lead.isUp ? rgba(forgeIce, 0.6) : rgba(forgeCoral, 0.7);
         ctx.beginPath();
         ctx.arc(leadX, liveY, ringR, 0, Math.PI * 2);
         ctx.stroke();
@@ -534,7 +545,7 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
         const drawY = logoCenterY - drawH / 2 + floatY;
 
         ctx.globalAlpha = logoAlpha;
-        ctx.shadowColor = 'rgba(167, 235, 242, 0.9)';
+        ctx.shadowColor = rgba(forgeIce, 0.9);
         ctx.shadowBlur = 35;
 
         // Draw glowing logo emblem
@@ -542,7 +553,7 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
 
         // Highlight ring around the assembled logo
         const pulseRingR = (logoSize / 2) * 1.08 + Math.sin(time * 3) * 6;
-        ctx.strokeStyle = 'rgba(167, 235, 242, 0.4)';
+        ctx.strokeStyle = rgba(forgeIce, 0.4);
         ctx.lineWidth = 1.8;
         ctx.beginPath();
         ctx.arc(logoCenterX, logoCenterY + floatY, pulseRingR, 0, Math.PI * 2);
@@ -601,13 +612,13 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
   }, []);
 
   return (
-    <div ref={containerRef} className={`absolute inset-0 -z-20 overflow-hidden bg-[#011c40] ${className}`}>
+    <div ref={containerRef} className={`absolute inset-0 -z-20 overflow-hidden bg-forge-navy ${className}`}>
       {/* 1. Underlying subtle original image texture */}
       <img
         src="/images/bannerhero.png"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 size-full object-cover object-[64%_center] opacity-20 mix-blend-screen"
+        className="pointer-events-none absolute inset-0 size-full object-cover object-[64%_center] opacity-10 mix-blend-screen"
       />
 
       {/* 2. Live 60FPS High-Variance Candlesticks, Morphing into Logo & 3D Interactive Parallax */}
@@ -616,11 +627,11 @@ export function Trading3DBackground({ className = '' }: { className?: string }) 
       {/* 3. Deep Vignette edges to naturally integrate into dark blue app shell */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#011c40] via-[#011c40]/70 to-transparent sm:w-2/3"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-forge-navy via-forge-navy/80 to-transparent sm:w-2/3"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#011c40] via-transparent to-[#011c40]/40"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forge-navy via-transparent to-forge-navy/40"
       />
     </div>
   );

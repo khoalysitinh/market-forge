@@ -5,7 +5,7 @@ type HeaderTheme = "light" | "dark";
 const NAV_LINKS = [
   { label: "Trade", href: "/trade" },
   { label: "Community", href: "/#community" },
-  { label: "About", href: "/#about" },
+  { label: "About", href: "/about" },
   { label: "New", href: "/#how-it-works", isNew: true },
 ];
 
@@ -17,12 +17,11 @@ function NavigationLinks({ onNavigate }: { onNavigate?: () => void }) {
           key={item.label}
           href={item.href}
           onClick={onNavigate}
-          // Tăng chữ từ text-xs sm:text-sm -> text-sm sm:text-base và nới padding ngang sm:px-5
-          className="group/nav relative inline-flex items-center gap-2 rounded-full px-3.5 py-2.5 font-sans text-sm font-semibold uppercase tracking-[0.08em] text-white transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a7ebf2] motion-reduce:transition-none sm:px-5 sm:text-base"
+          className="group/nav relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-2 font-sans text-xs font-semibold uppercase tracking-[0.08em] text-forge-ice transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forge-coral motion-reduce:transition-none sm:px-3 sm:text-sm"
         >
           {item.label}
           {item.isNew && (
-            <span aria-hidden="true" className="size-2 rounded-full bg-[#a7ebf2]" />
+            <span aria-hidden="true" className="size-2 rounded-full bg-forge-coral" />
           )}
           <span
             aria-hidden="true"
@@ -36,22 +35,13 @@ function NavigationLinks({ onNavigate }: { onNavigate?: () => void }) {
 
 function AuthLinks({ onNavigate }: { onNavigate?: () => void }) {
   const [selected, setSelected] = useState<"login" | "signup">("login");
-  const idleText = "text-white";
-  const border = "border-white/35";
 
   return (
     <div
       role="group"
       aria-label="Account access"
-      // Tăng độ rộng nút từ sm:min-w-48 -> sm:min-w-56 và cỡ chữ lên text-sm sm:text-base
-      className={`group/auth relative grid min-w-48 grid-cols-2 overflow-hidden rounded-full border ${border} bg-transparent p-1.5 font-sans text-sm font-semibold uppercase tracking-[0.06em] sm:min-w-56 sm:text-base`}
+      className="inline-flex items-center select-none font-sans"
     >
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none absolute inset-y-1.5 left-1.5 z-0 w-[calc(50%-0.375rem)] rounded-full border border-[#a7ebf2]/60 bg-[#a7ebf2] shadow-[0_2px_16px_rgba(167,235,242,0.18)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
-          selected === "signup" ? "translate-x-full" : "translate-x-0"
-        }`}
-      />
       <a
         href="#/login"
         aria-current={selected === "login" ? "page" : undefined}
@@ -59,13 +49,14 @@ function AuthLinks({ onNavigate }: { onNavigate?: () => void }) {
           setSelected("login");
           onNavigate?.();
         }}
-        className={`relative z-10 rounded-full px-4 py-2.5 text-center transition-[opacity,color,font-weight] duration-200 motion-reduce:transition-none hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a7ebf2] group-hover/auth:opacity-55 group-focus-within/auth:opacity-70 ${
-          selected === "login"
-            ? "font-bold text-[#011c40] opacity-100"
-            : `font-semibold ${idleText} opacity-80`
+        style={{
+          clipPath: "polygon(8px 0, 100% 0, calc(100% - 16px) 55%, calc(100% - 6px) 55%, calc(100% - 22px) 100%, 0 100%, 0 8px)",
+        }}
+        className={`relative z-10 inline-flex h-9 items-center pl-4 pr-7 text-[10px] font-black uppercase tracking-[0.08em] transition-[filter,opacity,transform] duration-200 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forge-ice motion-reduce:transition-none bg-linear-to-r from-[#059669] via-[#10B981] to-[#6EE7B7] text-[#042F2E] sm:text-[11px] ${
+          selected === "login" ? "opacity-100 shadow-[0_0_16px_rgba(16,185,129,0.3)]" : "opacity-75"
         }`}
       >
-        Log In
+        Login
       </a>
       <a
         href="#/signup"
@@ -74,10 +65,12 @@ function AuthLinks({ onNavigate }: { onNavigate?: () => void }) {
           setSelected("signup");
           onNavigate?.();
         }}
-        className={`relative z-10 rounded-full px-4 py-2.5 text-center transition-[opacity,color,font-weight] duration-200 motion-reduce:transition-none hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a7ebf2] group-hover/auth:opacity-55 group-focus-within/auth:opacity-70 ${
-          selected === "signup"
-            ? "font-bold text-[#011c40] opacity-100"
-            : `font-semibold ${idleText} opacity-80`
+        style={{
+          clipPath: "polygon(22px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 16px 45%, 6px 45%)",
+          marginLeft: "-17px",
+        }}
+        className={`relative z-20 inline-flex h-9 items-center gap-1.5 pl-7 pr-4 text-[10px] font-black uppercase tracking-[0.08em] transition-[filter,opacity,transform] duration-200 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forge-coral motion-reduce:transition-none bg-linear-to-r from-[#F43F5E] via-[#EF4444] to-[#F97316] text-white sm:text-[11px] ${
+          selected === "signup" ? "opacity-100 shadow-[0_0_16px_rgba(244,63,94,0.3)]" : "opacity-75"
         }`}
       >
         Sign Up
@@ -130,35 +123,35 @@ export function AppHeader() {
   }
 
   return (
-    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 bg-[#011c40]/75 px-4 backdrop-blur-md sm:px-8 lg:px-12">
-      <div className={`pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent ${theme === "light" ? "via-[#26658c]/30" : "via-[#a7ebf2]/35"} to-transparent`} />
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 bg-[#0A0A0A]/85 px-3 backdrop-blur-md sm:px-6 lg:px-8">
+      <div className={`pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent ${theme === "light" ? "via-forge-coral/50" : "via-forge-ice/45"} to-transparent`} />
       
-      {/* Mở rộng từ max-w-6xl lên max-w-[1440px] để đẩy Logo sang trái và Auth sang phải */}
-      <div className="mx-auto max-w-[1440px]">
-        <div data-header-bar className="flex min-h-[92px] items-center justify-between gap-4 lg:gap-8">
-          <a className="inline-flex shrink-0 items-center" href="/" aria-label="Market Forge home">
-            {/* Tăng kích thước logo: h-12 sm:h-14 lg:h-16 */}
-            <img
-              className="h-12 w-auto object-contain sm:h-14 lg:h-16"
-              src="/images/market-forge-logo-full.png"
-              alt="Market Forge"
-              width="1936"
-              height="350"
-            />
-          </a>
+      <div className="mx-auto max-w-[1600px]">
+        <div data-header-bar className="flex min-h-[62px] items-center justify-between gap-3 sm:min-h-[66px] lg:gap-5">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+            <a className="inline-flex shrink-0 items-center" href="/" aria-label="Market Forge home">
+              <img
+                className="h-8 w-auto object-contain sm:h-9 lg:h-10"
+                src="/images/market-forge-logo-full.png"
+                alt="Market Forge"
+                width="1936"
+                height="350"
+              />
+            </a>
 
-          {/* Tăng khoảng cách giữa các mục menu: gap-1 xl:gap-3 */}
-          <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex xl:gap-3">
-            <NavigationLinks />
-          </nav>
+            <span aria-hidden="true" className="hidden h-6 w-px shrink-0 bg-forge-ice/35 lg:block" />
+            <nav aria-label="Main navigation" className="hidden items-center gap-0.5 lg:flex xl:gap-1">
+              <NavigationLinks />
+            </nav>
+          </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden shrink-0 lg:block">
             <AuthLinks />
           </div>
 
           <button
             type="button"
-            className="inline-flex size-11 items-center justify-center rounded-full border border-white/35 bg-transparent font-sans text-xl text-white transition-transform duration-200 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a7ebf2] motion-reduce:transition-none lg:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-full border border-forge-ice/35 bg-transparent font-sans text-xl text-forge-ice transition-transform duration-200 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forge-coral motion-reduce:transition-none lg:hidden"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
@@ -170,7 +163,7 @@ export function AppHeader() {
 
         <div
           id="mobile-navigation"
-          className={`${menuOpen ? "block" : "hidden"} border-t border-white/20 bg-[#011c40]/90 pb-4 pt-3 backdrop-blur-md lg:hidden`}
+          className={`${menuOpen ? "block" : "hidden"} border-t border-forge-ice/20 bg-forge-navy/95 pb-4 pt-3 backdrop-blur-md lg:hidden`}
         >
           <nav aria-label="Mobile navigation" className="flex flex-col items-start">
             <NavigationLinks onNavigate={closeMenu} />

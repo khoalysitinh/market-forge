@@ -4,8 +4,9 @@ import { AppHeader } from "./components/AppHeader";
 import { AuthPage } from "./pages/AuthPage";
 import { LandingPage } from "./pages/LandingPage";
 import { TradePage } from "./pages/TradePage";
+import { AboutPage } from "./pages/AboutPage";
 
-type Route = "home" | "trade" | "login" | "signup";
+type Route = "home" | "trade" | "login" | "signup" | "about";
 
 function getRoute(): Route {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -14,6 +15,7 @@ function getRoute(): Route {
   if (path === "/trade") return "trade";
   if (path === "/login") return "login";
   if (path === "/signup") return "signup";
+  if (path === "/about") return "about";
   return "home";
 }
 
@@ -37,7 +39,7 @@ export function App() {
     <div className={`flex flex-col font-sans antialiased ${isTradeRoute ? "h-dvh overflow-hidden bg-luna-950 text-text-primary" : isAuthRoute ? "min-h-screen bg-[#00050d] text-white" : "min-h-screen bg-slate-100 text-slate-900"}`}>
       {!isTradeRoute && !isAuthRoute && <AppHeader />}
       <main className={`flex-1 ${isTradeRoute ? "min-h-0" : ""}`}>
-        {isTradeRoute ? <TradePage /> : route === "login" || route === "signup" ? <AuthPage key={route} mode={route} /> : <LandingPage />}
+        {isTradeRoute ? <TradePage /> : route === "login" || route === "signup" ? <AuthPage key={route} mode={route} /> : route === "about" ? <AboutPage /> : <LandingPage />}
       </main>
       {!isTradeRoute && !isAuthRoute && <AppFooter />}
     </div>

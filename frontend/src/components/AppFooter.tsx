@@ -18,12 +18,12 @@ export function AppFooter() {
   }
 
   return (
-    <footer data-header-theme="dark" className="relative overflow-hidden border-t border-white/10 bg-[#011c40] px-5 pb-6 pt-14 text-slate-300 sm:px-8 sm:pt-16">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-36 size-80 rounded-full bg-[#1b98e0]/10 blur-3xl" />
+    <footer data-header-theme="dark" className="relative overflow-hidden border-t border-forge-ice/10 bg-[#0A0A0A] px-5 pb-6 pt-14 text-slate-300 sm:px-8 sm:pt-16">
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-36 size-80 rounded-full bg-forge-coral/10 blur-3xl" />
       <div className="relative mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-10 border-b border-white/10 pb-12 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-3">
-            <a href="#/" aria-label="Market Forge home" className="inline-flex rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a7ebf2]">
+            <a href="#/" aria-label="Market Forge home" className="inline-flex rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forge-coral">
               <img src="/images/market-forge-logo-white-text.png" alt="Market Forge" className="h-auto w-56 max-w-full object-contain sm:w-64" width="512" height="120" />
             </a>
             <p className="mt-5 max-w-xs text-sm leading-6 text-slate-400">A calmer place to practice market decisions, sharpen your process, and learn together.</p>
@@ -42,9 +42,9 @@ export function AppFooter() {
                 value={email}
                 onChange={(event) => { setEmail(event.target.value); setMessage(""); }}
                 placeholder="Your email address"
-                className="min-h-12 min-w-0 flex-1 rounded-lg border border-white/15 bg-white/[0.06] px-4 font-sans text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-[#a7ebf2] focus:ring-2 focus:ring-[#a7ebf2]/20"
+                className="min-h-12 min-w-0 flex-1 rounded-lg border border-forge-ice/20 bg-white/[0.06] px-4 font-sans text-sm text-white placeholder:text-slate-400 outline-none transition-colors focus:border-forge-coral focus:ring-2 focus:ring-forge-coral/20"
               />
-              <button type="submit" className="min-h-12 rounded-lg bg-[#a7ebf2] px-6 font-sans text-sm font-bold uppercase tracking-[0.06em] text-[#011c40] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a7ebf2] motion-reduce:transition-none">
+              <button type="submit" className="min-h-12 rounded-lg bg-forge-coral px-6 font-sans text-sm font-bold uppercase tracking-[0.06em] text-forge-navy transition-colors hover:bg-forge-ice focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forge-coral motion-reduce:transition-none">
                 Send <span aria-hidden="true">→</span>
               </button>
             </form>
@@ -62,8 +62,8 @@ export function AppFooter() {
                       <span className="font-mono text-[9px] uppercase tracking-wider text-slate-600">Soon</span>
                     </span>
                   ) : (
-                    <a href={social.href} target="_blank" rel="noreferrer" aria-label={`${social.name}: ${social.handle}`} className="flex items-center justify-between gap-3 rounded-md py-2 font-sans text-sm text-slate-300 transition-colors hover:text-[#a7ebf2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a7ebf2]">
-                      <span>{social.name}</span><span aria-hidden="true" className="text-[#a7ebf2]">↗</span>
+                    <a href={social.href} target="_blank" rel="noreferrer" aria-label={`${social.name}: ${social.handle}`} className="flex items-center justify-between gap-3 rounded-md py-2 font-sans text-sm text-slate-300 transition-colors hover:text-forge-coral focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forge-coral">
+                      <span>{social.name}</span><span aria-hidden="true" className="text-forge-coral">↗</span>
                     </a>
                   )}
                 </li>
